@@ -3,27 +3,94 @@ import "./App.css";
 import { CeldaComponent } from "./components/ButtonComponent/CeldaComponent";
 
 function App() {
-  const [mapaValores, setMapaValores] = useState(Array(64).fill(" "));
+  const creaTablero = (minas) => {
+    const tablero = Array(64).fill(0);
+    const totalMinas = 10;
+    let totalMinasInsertadas = 0;
+
+    while (totalMinas > totalMinasInsertadas) {
+      const numeroAleatorio = Math.floor(Math.random() * 64);
+      if (tablero[numeroAleatorio] == "*") {
+        continue;
+      }
+      tablero[numeroAleatorio] = "*";
+      totalMinasInsertadas++;
+    }
+    tablero.filter((el, index, arr) => {
+      if (el == "*") {
+        let izq = index - 1 >= 0 && index % 8 !== 0 ? index - 1 : index;
+        let der =
+          index + 1 < arr.length && (index + 1) % 8 !== 0 ? index + 1 : index;
+        let abj = index + 8 < arr.length ? index + 8 : index;
+        let arrib = index - 8 >= 0 ? index - 8 : index;
+        let derechaAbajo = der + 8 < arr.length ? der + 8 : der;
+        let derechaArriba = der - 8 >= 0 ? der - 8 : der;
+        let izquierdaAbajo = izq + 8 < arr.length ? izq + 8 : izq;
+        let izquierdaArriba = izq - 8 >= 0 ? izq - 8 : izq;
+        if (arr[izq] !== "*") {
+          arr[izq]++;
+        }
+        if (arr[der] !== "*") {
+          arr[der]++;
+        }
+
+        if (arr[abj] !== "*") {
+          arr[abj]++;
+        }
+
+        if (arr[arrib] !== "*") {
+          arr[arrib]++;
+        }
+
+        if (arr[derechaAbajo] !== "*") {
+          arr[derechaAbajo]++;
+        }
+
+        if (arr[derechaArriba] !== "*") {
+          arr[derechaArriba]++;
+        }
+
+        if (arr[izquierdaArriba] !== "*") {
+          arr[izquierdaArriba]++;
+        }
+
+        if (arr[izquierdaAbajo] !== "*") {
+          arr[izquierdaAbajo]++;
+        }
+      }
+    });
+    console.log(tablero);
+
+    return tablero;
+  };
+
+  const tableroNuevo = creaTablero();
+
+  const [mapaValores, setMapaValores] = useState(tableroNuevo);
   let array = [];
 
   for (let i = 0; i < 64; i++) {
     array = [i, ...array];
   }
+
   const celda = mapaValores.map((el, index) => (
     <div key={index} className="col-auto p-0">
-      <CeldaComponent valor={el}></CeldaComponent>
+      <CeldaComponent
+        valor={el}
+        onCeldaClick={() => mostrarValor(index)}
+      ></CeldaComponent>
     </div>
   ));
 
   const btnComenzar = () => {
-    let array = [];
-
-    for (let i = 0; i < 64; i++) {
-      array = [i, ...array];
-    }
-    setMapaValores(array);
+    setMapaValores(Array(64).fill(" "));
   };
-  const mostrarValor = (index) => {};
+
+  const mostrarValor = (index) => {
+    const copiaValores = mapaValores.slice();
+    copiaValores[index] = array[index];
+    setMapaValores(copiaValores);
+  };
 
   return (
     <>
